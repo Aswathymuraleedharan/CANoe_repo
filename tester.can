@@ -1,0 +1,52 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  message 0x100 Testermsg;
+  timer Testerpresent;
+  
+}
+on start
+{
+  write("Tester: started");
+  write("Tester: press 't'-Extended Diagnostic session");
+  write("Tester: press 'k'-stop ");
+  Testermsg.dlc=8;
+}
+void init_frame()
+{
+  int i;
+  for(i=0;i<8;i++)
+    Testermsg.byte(i)=0xFF;
+ }
+on key 't' 
+{
+  //setTimer(Testerpresent,4);
+  write("Tester :Request to move to extended Diagonostic Session");
+  init_frame();
+  Testermsg.byte(0)=0x02;
+  Testermsg.byte(1)=0x10;
+  Testermsg.byte(2)=0x03;
+  output(Testermsg);
+  setTimer(Testerpresent,4);
+}
+on key 'k'
+{
+  cancelTimer(Testerpresent);
+}
+
+
+on timer Testerpresent
+{
+  setTimer(Testerpresent,4);
+  init_frame();
+  Testermsg.byte(0)=0x02;
+  Testermsg.byte(1)=0x3E;
+  Testermsg.byte(2)=0x00;
+  output(Testermsg);
+}
+
